@@ -12,12 +12,14 @@ import net.neoforged.neoforge.common.ModConfigSpec;
  * {@link FlatWireConfig}; an insulated wire has the resistance of its conductor.
  */
 public enum FlatWireMaterial implements StringRepresentable {
-    COPPER("copper", 1, FlatWireConfig.COPPER_RESISTANCE, false),
-    ELECTRUM("electrum", 1, FlatWireConfig.ELECTRUM_RESISTANCE, false),
-    IRON("iron", 1, FlatWireConfig.IRON_RESISTANCE, false),
-    INSULATED_COPPER("insulated_copper", 2, FlatWireConfig.COPPER_RESISTANCE, true),
-    INSULATED_ELECTRUM("insulated_electrum", 2, FlatWireConfig.ELECTRUM_RESISTANCE, true),
-    INSULATED_IRON("insulated_iron", 2, FlatWireConfig.IRON_RESISTANCE, true);
+    COPPER("copper", 1, FlatWireConfig.COPPER_RESISTANCE, false, false),
+    ELECTRUM("electrum", 1, FlatWireConfig.ELECTRUM_RESISTANCE, false, false),
+    IRON("iron", 1, FlatWireConfig.IRON_RESISTANCE, false, false),
+    INSULATED_COPPER("insulated_copper", 2, FlatWireConfig.COPPER_RESISTANCE, true, false),
+    INSULATED_ELECTRUM("insulated_electrum", 2, FlatWireConfig.ELECTRUM_RESISTANCE, true, false),
+    INSULATED_IRON("insulated_iron", 2, FlatWireConfig.IRON_RESISTANCE, true, false),
+    /** Copper values, but only drawn while an invisible flat wire is held. */
+    INVISIBLE("invisible", 1, FlatWireConfig.COPPER_RESISTANCE, false, true);
 
     /** Name used before 0.0.9 for the insulated copper wire. */
     private static final String LEGACY_INSULATED = "insulated";
@@ -29,12 +31,15 @@ public enum FlatWireMaterial implements StringRepresentable {
     private final int thicknessPixels;
     private final ModConfigSpec.DoubleValue resistance;
     private final boolean insulated;
+    private final boolean hidden;
 
-    FlatWireMaterial(String name, int thicknessPixels, ModConfigSpec.DoubleValue resistance, boolean insulated) {
+    FlatWireMaterial(String name, int thicknessPixels, ModConfigSpec.DoubleValue resistance, boolean insulated,
+                     boolean hidden) {
         this.name = name;
         this.thicknessPixels = thicknessPixels;
         this.resistance = resistance;
         this.insulated = insulated;
+        this.hidden = hidden;
     }
 
     private static DataResult<FlatWireMaterial> byName(String name) {
@@ -76,6 +81,11 @@ public enum FlatWireMaterial implements StringRepresentable {
 
     public boolean insulated() {
         return insulated;
+    }
+
+    /** Only rendered (and pickable) while a wire of this material is held. */
+    public boolean hidden() {
+        return hidden;
     }
 
     /** Voltage the insulation withstands, in volts (only meaningful when {@link #insulated()}). */

@@ -226,6 +226,9 @@ public class SurfaceWireItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+        if (material.hidden()) {
+            tooltip.add(Component.translatable("tooltip.yesmenncreates.flat_wire.invisible").withStyle(ChatFormatting.DARK_AQUA));
+        }
         tooltip.add(Component.translatable("tooltip.yesmenncreates.flat_wire.electric_stats").withStyle(ChatFormatting.GRAY));
         tooltip.add(stat("resistance", Units.resistancePerMeter(material.resistancePerBlock()), ChatFormatting.AQUA));
         if (material.insulated()) {

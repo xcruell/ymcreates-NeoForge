@@ -76,8 +76,12 @@ public final class SurfaceWireClient {
     private static final Int2ObjectMap<SurfaceWire> WIRES = new Int2ObjectOpenHashMap<>();
     private static final Long2ObjectMap<Section> SECTIONS = new Long2ObjectOpenHashMap<>();
 
-    /** Which wire draws the cube of a wire end that several wires share (lowest id). */
+    /**
+     * Which wire draws the cube of a wire end that several wires share (lowest id). Kept apart for hidden
+     * (invisible) wires, which are drawn into their own buffer.
+     */
     private static final Map<GridPos, Integer> ENDPOINT_OWNER = new HashMap<>();
+    private static final Map<GridPos, Integer> HIDDEN_ENDPOINT_OWNER = new HashMap<>();
 
     private static String lastPreviewText = "";
     private static boolean airModeSent = false;
@@ -88,6 +92,8 @@ public final class SurfaceWireClient {
         final BlockPos origin;
         final IntSet wires = new IntOpenHashSet();
         VertexBuffer buffer;
+        /** Invisible wires, only drawn while one is held. */
+        VertexBuffer hiddenBuffer;
         boolean dirty = true;
         long builtAt;
         AABB bounds;
@@ -100,6 +106,10 @@ public final class SurfaceWireClient {
             if (buffer != null) {
                 buffer.close();
                 buffer = null;
+            }
+            if (hiddenBuffer != null) {
+                hiddenBuffer.close();
+                hiddenBuffer = null;
             }
         }
     }
@@ -151,9 +161,11 @@ public final class SurfaceWireClient {
     /** Recomputes the end cube owners and re-meshes the wires sharing an end with {@code changed}. */
     private static void endpointsChanged(SurfaceWire changed) {
         ENDPOINT_OWNER.clear();
+        HIDDEN_ENDPOINT_OWNER.clear();
         for (SurfaceWire wire : WIRES.values()) {
-            ENDPOINT_OWNER.merge(wire.start(), wire.id(), Math::min);
-            ENDPOINT_OWNER.merge(wire.end(), wire.id(), Math::min);
+            Map<GridPos, Integer> owners = owners(wire);
+            owners.merge(wire.start(), wire.id(), Math::min);
+            owners.merge(wire.end(), wire.id(), Math::min);
         }
         for (SurfaceWire wire : WIRES.values()) {
             if (wire.start().equals(changed.start()) || wire.start().equals(changed.end())
@@ -181,6 +193,15 @@ public final class SurfaceWireClient {
         }
     }
 
+    private static Map<GridPos, Integer> owners(SurfaceWire wire) {
+        return wire.material().hidden() ? HIDDEN_ENDPOINT_OWNER : ENDPOINT_OWNER;
+    }
+
+    /** Invisible wires are shown while one is held. */
+    private static boolean showHidden(Player player) {
+        return heldWire(player).getItem() instanceof SurfaceWireItem item && item.getMaterial().hidden();
+    }
+
     private static long sectionKey(SurfaceWire wire) {
         return SectionPos.asLong(wire.start().blockPos());
     }
@@ -190,6 +211,7 @@ public final class SurfaceWireClient {
         SECTIONS.clear();
         WIRES.clear();
         ENDPOINT_OWNER.clear();
+        HIDDEN_ENDPOINT_OWNER.clear();
         airModeSent = false;
     }
 
@@ -220,6 +242,7 @@ public final class SurfaceWireClient {
             return;
         }
         Frustum frustum = event.getFrustum();
+        boolean showHidden = mc.player != null && showHidden(mc.player);
         long now = Util.getMillis();
         int rebuilds = 0;
         List<Section> visible = new ArrayList<>();
@@ -231,11 +254,11 @@ public final class SurfaceWireClient {
                 continue;
             }
             if ((section.dirty || now - section.builtAt > LIGHT_REFRESH_MS)
-                    && (rebuilds < MAX_REBUILDS_PER_FRAME || section.buffer == null)) {
+                    && (rebuilds < MAX_REBUILDS_PER_FRAME || section.builtAt == 0)) {
                 build(section, level, now);
                 rebuilds++;
             }
-            if (section.buffer != null) {
+            if (section.buffer != null || (showHidden && section.hiddenBuffer != null)) {
                 visible.add(section);
             }
         }
@@ -261,8 +284,12 @@ public final class SurfaceWireClient {
                         (float) (section.origin.getZ() - camera.z));
                 chunkOffset.upload();
             }
-            section.buffer.bind();
-            section.buffer.draw();
+            for (VertexBuffer buffer : new VertexBuffer[]{section.buffer, showHidden ? section.hiddenBuffer : null}) {
+                if (buffer != null) {
+                    buffer.bind();
+                    buffer.draw();
+                }
+            }
         }
         if (chunkOffset != null) {
             chunkOffset.set(0f, 0f, 0f);
@@ -286,13 +313,20 @@ public final class SurfaceWireClient {
     private static void build(Section section, ClientLevel level, long now) {
         section.dirty = false;
         section.builtAt = now;
+        section.buffer = mesh(section, level, false, section.buffer);
+        section.hiddenBuffer = mesh(section, level, true, section.hiddenBuffer);
+    }
+
+    /** Meshes the visible or the hidden wires of a section into {@code buffer}; null if there are none. */
+    private static VertexBuffer mesh(Section section, ClientLevel level, boolean hidden, VertexBuffer buffer) {
         BufferBuilder builder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
         var atlas = Minecraft.getInstance().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS);
         for (int id : section.wires) {
             SurfaceWire wire = WIRES.get(id);
-            if (wire == null) {
+            if (wire == null || wire.material().hidden() != hidden) {
                 continue;
             }
+            Map<GridPos, Integer> owners = owners(wire);
             TextureAtlasSprite sprite = atlas.getSprite(wire.material().texture());
             int h = wire.material().halfThickness();
             List<GridPos> points = wire.points();
@@ -302,7 +336,7 @@ public final class SurfaceWireClient {
             for (int i = 0; i <= last; i++) {
                 GridPos p = points.get(i);
                 boolean end = i == 0 || i == last;
-                if (end && ENDPOINT_OWNER.getOrDefault(p, id) != id) {
+                if (end && owners.getOrDefault(p, id) != id) {
                     continue;
                 }
                 box(builder, level, section.origin, sprite,
@@ -315,15 +349,18 @@ public final class SurfaceWireClient {
         }
         MeshData mesh = builder.build();
         if (mesh == null) {
-            section.close();
-            return;
+            if (buffer != null) {
+                buffer.close();
+            }
+            return null;
         }
-        if (section.buffer == null) {
-            section.buffer = new VertexBuffer(VertexBuffer.Usage.STATIC);
+        if (buffer == null) {
+            buffer = new VertexBuffer(VertexBuffer.Usage.STATIC);
         }
-        section.buffer.bind();
-        section.buffer.upload(mesh);
+        buffer.bind();
+        buffer.upload(mesh);
         VertexBuffer.unbind();
+        return buffer;
     }
 
     /** Piece between two cubes, split at block borders so every part gets the light of its own block. */
@@ -500,8 +537,9 @@ public final class SurfaceWireClient {
         AABB ray = new AABB(eye, end);
         int best = -1;
         double bestDistance = Double.MAX_VALUE;
+        boolean showHidden = showHidden(player);
         for (SurfaceWire wire : WIRES.values()) {
-            if (!wire.bounds().inflate(0.1).intersects(ray)) {
+            if ((wire.material().hidden() && !showHidden) || !wire.bounds().inflate(0.1).intersects(ray)) {
                 continue;
             }
             List<GridPos> points = wire.points();

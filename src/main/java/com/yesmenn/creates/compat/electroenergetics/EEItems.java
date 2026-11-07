@@ -24,6 +24,7 @@ public final class EEItems {
     public static final DeferredItem<SurfaceWireItem> INSULATED_COPPER_FLAT_WIRE = flatWire(FlatWireMaterial.INSULATED_COPPER);
     public static final DeferredItem<SurfaceWireItem> INSULATED_ELECTRUM_FLAT_WIRE = flatWire(FlatWireMaterial.INSULATED_ELECTRUM);
     public static final DeferredItem<SurfaceWireItem> INSULATED_IRON_FLAT_WIRE = flatWire(FlatWireMaterial.INSULATED_IRON);
+    public static final DeferredItem<SurfaceWireItem> INVISIBLE_FLAT_WIRE = flatWire(FlatWireMaterial.INVISIBLE);
 
     private static DeferredItem<SurfaceWireItem> flatWire(FlatWireMaterial material) {
         DeferredItem<SurfaceWireItem> item = ITEMS.register(material.itemName(),
