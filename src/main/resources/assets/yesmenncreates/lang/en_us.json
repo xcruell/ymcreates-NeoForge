@@ -37,5 +37,7 @@
   "tooltip.yesmenncreates.flat_wire.usage4": "Hold Ctrl: lay it through the air",
   "tooltip.yesmenncreates.flat_wire.usage5": "Sneak + R-Click: cancel / remove a wire",
   "message.yesmenncreates.flat_wire.air_mode": "(through the air)",
-  "message.yesmenncreates.flat_wire.unsupported": "The wire needs a surface to lie on (hold Ctrl to lay it through the air)"
+  "message.yesmenncreates.flat_wire.unsupported": "The wire needs a surface to lie on (hold Ctrl to lay it through the air)",
+  "yesmenncreates.ponder.check_valve.header": "Check Valve Function",
+  "yesmenncreates.ponder.check_valve.text_1": "The Check Valve only lets fluids pass in one direction"
 }

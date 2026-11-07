@@ -44,5 +44,7 @@
   "tooltip.yesmenncreates.flat_wire.usage4": "Strg halten: durch die Luft verlegen",
   "tooltip.yesmenncreates.flat_wire.usage5": "Schleichen + Rechtsklick: abbrechen / Kabel entfernen",
   "message.yesmenncreates.flat_wire.air_mode": "(durch die Luft)",
-  "message.yesmenncreates.flat_wire.unsupported": "Das Kabel braucht eine Fläche zum Aufliegen (Strg halten, um es durch die Luft zu verlegen)"
+  "message.yesmenncreates.flat_wire.unsupported": "Das Kabel braucht eine Fläche zum Aufliegen (Strg halten, um es durch die Luft zu verlegen)",
+  "yesmenncreates.ponder.check_valve.header": "Das Rückschlagventil benutzen",
+  "yesmenncreates.ponder.check_valve.text_1": "Das Rückschlagventil lässt Flüssigkeit nur in eine Richtung durch"
 }

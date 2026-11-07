@@ -24,7 +24,7 @@ public final class YMCreativeModeTabs {
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> YM_DECOR =
             CREATIVE_MODE_TABS.register("yes_menn", () -> CreativeModeTab.builder()
-                    .title(Component.translatable("itemGroup.ymdecoradditions"))
+                    .title(Component.translatable("itemGroup.yesmenncreates"))   //changed itemgroup from ymdecorations to
                     .icon(() -> YMItems.ENVOKILLER3000.get().getDefaultInstance())
                     .displayItems((parameters, output) -> {
                         output.accept(YMBlocks.ENVOKILLER3000.get());
