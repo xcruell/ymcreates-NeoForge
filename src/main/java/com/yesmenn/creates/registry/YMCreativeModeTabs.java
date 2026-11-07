@@ -2,6 +2,7 @@
 package com.yesmenn.creates.registry;
 
 import com.yesmenn.creates.YesmennCreates;
+import com.yesmenn.creates.compat.YMCompat;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -28,6 +29,7 @@ public final class YMCreativeModeTabs {
                     .displayItems((parameters, output) -> {
                         output.accept(YMBlocks.ENVOKILLER3000.get());
                         output.accept(YMBlocks.CHECK_VALVE.get());
+                        YMCompat.addToCreativeTab(output);
                     })
                     .build());
 

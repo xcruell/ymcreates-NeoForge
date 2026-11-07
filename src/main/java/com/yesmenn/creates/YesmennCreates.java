@@ -1,5 +1,6 @@
 package com.yesmenn.creates;
 
+import com.yesmenn.creates.compat.YMCompat;
 import com.yesmenn.creates.registry.*;
 import org.slf4j.Logger;
 
@@ -22,5 +23,8 @@ public class YesmennCreates {
         YMCreativeModeTabs.CREATIVE_MODE_TABS.register(modEventBus);
 //        YMMenuTypes.MENUS.register(modEventBus);
         YMParticles.PARTICLE_TYPES.register(modEventBus);
+
+        // optional mod integrations (only active when the mod is installed)
+        YMCompat.init(modEventBus, modContainer);
     }
 }

@@ -70,3 +70,19 @@ Example mod description.
     versionRange="${minecraft_version_range}"
     ordering="NONE"
     side="BOTH"
+
+# Create (base mod) - required, this mod is an addon for Create
+[[dependencies.${mod_id}]]
+    modId="create"
+    type="required"
+    versionRange="${create_version_range}"
+    ordering="AFTER"
+    side="BOTH"
+
+# Create: Electro Energetics - optional, compat content only loads when it is installed
+[[dependencies.${mod_id}]]
+    modId="electroenergetics"
+    type="optional"
+    versionRange="${create_ee_version_range}"
+    ordering="AFTER"
+    side="BOTH"

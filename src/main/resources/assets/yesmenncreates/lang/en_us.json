@@ -1,16 +1,39 @@
 {
   "itemGroup.yesmenncreates": "Create:ing stuff? YesMenn!",
-
   "block.yesmenncreates.envokiller3000": "EnvoKiller3000",
   "block.yesmenncreates.check_valve": "Check Valve",
-
   "item.valvepack.example_item": "Check Valve Item",
-
-
   "create.goggles.envokiller3000": "EnvoKiller3000",
   "create.goggles.envokiller3000.fluidPrefix": "Contains: ",
   "create.goggles.envokiller3000.burnrate": "Burnrate: ",
   "create.goggles.envokiller3000.status": "Status: ",
   "create.goggles.envokiller3000.idle": "Idle",
-  "create.goggles.envokiller3000.burning": "Burning"
+  "create.goggles.envokiller3000.burning": "Burning",
+  "item.yesmenncreates.copper_flat_wire": "Copper Flat Wire",
+  "item.yesmenncreates.electrum_flat_wire": "Electrum Flat Wire",
+  "item.yesmenncreates.iron_flat_wire": "Iron Flat Wire",
+  "item.yesmenncreates.insulated_copper_flat_wire": "Insulated Copper Flat Wire",
+  "item.yesmenncreates.insulated_electrum_flat_wire": "Insulated Electrum Flat Wire",
+  "item.yesmenncreates.insulated_iron_flat_wire": "Insulated Iron Flat Wire",
+  "message.yesmenncreates.flat_wire.start_hint": "Start at an Electro Energetics connector or a free wire end",
+  "message.yesmenncreates.flat_wire.started": "Wire started - right-click blocks to lay it",
+  "message.yesmenncreates.flat_wire.connected": "Wire connected",
+  "message.yesmenncreates.flat_wire.cancelled": "Wire cancelled",
+  "message.yesmenncreates.flat_wire.too_long": "Too long (max. 64 blocks per section)",
+  "message.yesmenncreates.flat_wire.blocked": "The wire would go through a block",
+  "message.yesmenncreates.flat_wire.not_enough": "Not enough wire",
+  "message.yesmenncreates.flat_wire.preview": "Length: %s blocks, needs %s wire",
+  "tooltip.yesmenncreates.flat_wire.electric_stats": "Electric Stats:",
+  "tooltip.yesmenncreates.flat_wire.resistance": "Resistance:",
+  "tooltip.yesmenncreates.flat_wire.max_voltage": "Max Voltage:",
+  "tooltip.yesmenncreates.flat_wire.max_length": "Max Length:",
+  "tooltip.yesmenncreates.flat_wire.blocks": "%s blocks per piece",
+  "tooltip.yesmenncreates.flat_wire.hold_shift": "Hold [Shift] for usage",
+  "tooltip.yesmenncreates.flat_wire.usage1": "R-Click a connector: start the wire",
+  "tooltip.yesmenncreates.flat_wire.usage2": "R-Click a block: lay the wire up to there",
+  "tooltip.yesmenncreates.flat_wire.usage3": "R-Click a connector again: finish",
+  "tooltip.yesmenncreates.flat_wire.usage4": "Hold Ctrl: lay it through the air",
+  "tooltip.yesmenncreates.flat_wire.usage5": "Sneak + R-Click: cancel / remove a wire",
+  "message.yesmenncreates.flat_wire.air_mode": "(through the air)",
+  "message.yesmenncreates.flat_wire.unsupported": "The wire needs a surface to lie on (hold Ctrl to lay it through the air)"
 }

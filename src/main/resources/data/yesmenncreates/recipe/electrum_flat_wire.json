@@ -1,0 +1,19 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "electroenergetics"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    {
+      "item": "electroenergetics:electrum_wire"
+    }
+  ],
+  "result": {
+    "id": "yesmenncreates:electrum_flat_wire",
+    "count": 4
+  }
+}
