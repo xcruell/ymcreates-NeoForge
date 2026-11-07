@@ -1,5 +1,6 @@
 package com.yesmenn.creates;
 
+import com.yesmenn.creates.registry.*;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -11,13 +12,15 @@ import net.neoforged.fml.ModContainer;
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(YesmennCreates.MODID)
 public class YesmennCreates {
-    // Define mod id in a common place for everything to reference
     public static final String MODID = "yesmenncreates";
-    // Directly reference a slf4j logger
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    // The constructor for the mod class is the first code that is run when your mod is loaded.
-    // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
     public YesmennCreates(IEventBus modEventBus, ModContainer modContainer) {
+        YMBlocks.BLOCKS.register(modEventBus);
+        YMBlockEntities.register(modEventBus);
+        YMItems.ITEMS.register(modEventBus);
+        YMCreativeModeTabs.CREATIVE_MODE_TABS.register(modEventBus);
+//        YMMenuTypes.MENUS.register(modEventBus);
+        YMParticles.PARTICLE_TYPES.register(modEventBus);
     }
 }

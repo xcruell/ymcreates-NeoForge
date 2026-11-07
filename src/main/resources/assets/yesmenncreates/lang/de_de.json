@@ -1,0 +1,22 @@
+{
+  "itemGroup.ymdecoradditions": "Decor & additions? YesMenn!",
+
+  "block.ymdecoradditions.meadow_bush": "Meadow Busch",
+  "block.ymdecoradditions.fern_bush": "Farn Busch",
+  "block.ymdecoradditions.large_campfire": "Large Campfire",
+  "block.ymdecoradditions.envokiller3000": "UmweltZerstörer3000",
+
+  "create.goggles.envokiller3000": "EnvoKiller3000",
+  "create.goggles.envokiller3000.fluidPrefix": "Contains: ",
+  "create.goggles.envokiller3000.burnrate": "Brennrate: ",
+  "create.goggles.envokiller3000.status": "Status: ",
+  "create.goggles.envokiller3000.idle": "Abbeidslos",
+  "create.goggles.envokiller3000.burning": "Abbeided",
+
+  "container.ymdecoradditions.particle_maker": "Particle Maker",
+  "gui.ymdecoradditions.particle_maker.toggle": "Toggle Output",
+  "gui.ymdecoradditions.particle_maker.mode": "Switch Mode",
+  "gui.ymdecoradditions.particle_maker.output": "Output:",
+  "gui.ymdecoradditions.particle_maker.mode_label": "Mode:",
+  "gui.ymdecoradditions.particle_maker.redstone": "Redstone:"
+}

@@ -1,0 +1,27 @@
+{
+	"textures": {
+		"0": "yesmenncreates:block/campfire_fire"
+	},
+	"elements": [
+		{
+			"from": [2, 0, 8],
+			"to": [14, 19, 8],
+			"shade": false,
+			"rotation": {"angle": 0, "axis": "y", "origin": [8.2, 9.5, 8], "rescale": true},
+			"faces": {
+				"north": {"uv": [0, 0, 16, 16], "texture": "#0"},
+				"south": {"uv": [16, 0, 0, 16], "texture": "#0"}
+			}
+		},
+		{
+			"from": [8, 0, 2],
+			"to": [8, 19, 14],
+			"shade": false,
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 9.5, 8.2], "rescale": true},
+			"faces": {
+				"east": {"uv": [16, 0, 0, 16], "texture": "#0"},
+				"west": {"uv": [0, 0, 16, 16], "texture": "#0"}
+			}
+		}
+	]
+}

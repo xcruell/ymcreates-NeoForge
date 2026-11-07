@@ -1,0 +1,16 @@
+{
+  "itemGroup.yesmenncreates": "Create:ing stuff? YesMenn!",
+
+  "block.yesmenncreates.envokiller3000": "EnvoKiller3000",
+  "block.yesmenncreates.check_valve": "Check Valve",
+
+  "item.valvepack.example_item": "Check Valve Item",
+
+
+  "create.goggles.envokiller3000": "EnvoKiller3000",
+  "create.goggles.envokiller3000.fluidPrefix": "Contains: ",
+  "create.goggles.envokiller3000.burnrate": "Burnrate: ",
+  "create.goggles.envokiller3000.status": "Status: ",
+  "create.goggles.envokiller3000.idle": "Idle",
+  "create.goggles.envokiller3000.burning": "Burning"
+}
