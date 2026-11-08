@@ -39,5 +39,9 @@
   "message.yesmenncreates.flat_wire.air_mode": "(through the air)",
   "message.yesmenncreates.flat_wire.unsupported": "The wire needs a surface to lie on (hold Ctrl to lay it through the air)",
   "yesmenncreates.ponder.check_valve.header": "Check Valve Function",
-  "yesmenncreates.ponder.check_valve.text_1": "The Check Valve only lets fluids pass in one direction"
+  "yesmenncreates.ponder.check_valve.text_1": "The Check Valve only lets fluids pass in one direction",
+  "yesmenncreates.ponder.check_valve.text_2": "Water",
+  "yesmenncreates.ponder.check_valve.text_3": "3",
+  "yesmenncreates.ponder.check_valve.text_4": "4",
+  "yesmenncreates.ponder.check_valve.text_5": "5"
 }
