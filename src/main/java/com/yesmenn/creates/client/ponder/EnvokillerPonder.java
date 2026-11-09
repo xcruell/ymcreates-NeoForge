@@ -63,10 +63,20 @@ public class EnvokillerPonder {
         var shaft =  util.select().position(0, 1, 4); // shaft
         var tank = util.select().fromTo(2,1,3,2,2,3);   // Tank
 
+        scene.world().showSection(util.select().position(envo), Direction.DOWN);
+        scene.idle(20);
+        scene.addKeyframe();
+        scene.overlay().showText(80)
+                .text("Envokiller is nice yes.")
+                .colored(PonderPalette.WHITE)
+                .pointAt(util.vector().centerOf(envo))
+                .placeNearTarget();
+        scene.idle(50);
+
         // YesMenn! Intro
         YMPonderAnim.introSpiralRandom(scene, util, 5);
 
-        scene.world().showSection(util.select().position(2,1,1), Direction.SOUTH); // Pipe
+        scene.world().showSection(util.select().position(2,1,1), Direction.WEST); // Pipe
         scene.world().showSection(tank, Direction.NORTH);
         scene.idle(5);
         scene.world().showSection(util.select().position(fpump), Direction.WEST);
@@ -74,19 +84,10 @@ public class EnvokillerPonder {
         scene.world().showSection(util.select().position(fwheel), Direction.SOUTH);
         scene.world().showSection(util.select().position(motor), Direction.NORTH);
         scene.idle(15);
-        scene.world().showSection(util.select().position(envo), Direction.DOWN);
-        scene.idle(20);
 
         //Scene 1
-        scene.addKeyframe();
-        scene.overlay().showText(80)
-                .text("Envokiller is nice yes.")
-                .colored(PonderPalette.WHITE)
-                .pointAt(util.vector().centerOf(envo))
-                .placeNearTarget();
-        scene.idle(30);
         fillTank(scene, source, FUEL);
-        scene.idle(60);
+        scene.idle(30);
         scene.world().setKineticSpeed(wheel, 32);
         scene.world().setKineticSpeed(pump, -32);
         scene.world().setKineticSpeed(shaft, -32);
@@ -113,7 +114,7 @@ public class EnvokillerPonder {
                 .colored(PonderPalette.WHITE)
                 .pointAt(util.vector().centerOf(new BlockPos(2,2,3)))
                 .placeNearTarget();
-        burn.idle(100);
+        burn.idle(50);
 
 //      ------------ Redstone scene ------------
         scene.addKeyframe();
