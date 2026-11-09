@@ -1,9 +1,9 @@
 {
   "itemGroup.yesmenncreates": "Create:ing stuff? YesMenn!",
-  "block.yesmenncreates.envokiller3000": "Envokiller§43000§r",
+  "block.yesmenncreates.envokiller3000": "Envokiller3000",
   "block.yesmenncreates.check_valve": "Check Valve",
   "item.valvepack.example_item": "Check Valve Item",
-  "create.goggles.envokiller3000": "Envokiller§43000§r",
+  "create.goggles.envokiller3000": "Envokiller3000",
   "create.goggles.envokiller3000.fluidPrefix": "Contains: ",
   "create.goggles.envokiller3000.burnrate": "Burnrate: ",
   "create.goggles.envokiller3000.status": "Status: ",
@@ -43,9 +43,9 @@
   "yesmenncreates.ponder.check_valve.text_2": "Fluid flow is blocked opposite to the direction of the arrow",
   "yesmenncreates.ponder.check_valve.text_3": "Turn the valve to change the direction of flow",
   "yesmenncreates.ponder.check_valve.text_4": "The liquid now flows in the direction of the arrow",
-  "yesmenncreates.ponder.envokiller.header": "Envokiller§43000§r",
+  "yesmenncreates.ponder.envokiller.header": "Envokiller3000",
   "yesmenncreates.ponder.envokiller.text_1": "Dispose of overflowing flammable liquids in an environmentally §a§l§ofriendly§r way",
-  "yesmenncreates.ponder.envokiller.text_2": "The Envokiller§43000§r burns flammable liquids quickly and reliably",
+  "yesmenncreates.ponder.envokiller.text_2": "The Envokiller3000 burns flammable liquids quickly and reliably",
   "yesmenncreates.ponder.envokiller.text_3": "§7Burnrate: §b500 §7mB/s",
   "yesmenncreates.ponder.envokiller.text_4": "Not fast and reliable enough? Power it with §cRedstone§r to unleash its full potential!",
   "yesmenncreates.ponder.envokiller.text_5": "§7Burnrate: §b1500 §7mB/s"

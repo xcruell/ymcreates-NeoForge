@@ -1,5 +1,6 @@
 package com.yesmenn.creates.client.ponder;
 
+import com.jcraft.jorbis.Block;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
 import com.yesmenn.creates.block.EnvoKiller3000Block;
@@ -49,6 +50,7 @@ public class EnvokillerPonder {
         BlockPos fwheel = util.grid().at(1, 1, 2); // Cogwheel for fade in
         BlockPos fpump = util.grid().at(2, 1, 2); // Pump for fade in
         BlockPos source = util.grid().at(2, 1, 3);   // Tank1
+        BlockPos redstone = util.grid().at(2, 2, 0);
         var wheel = util.select().fromTo(1,1,2,1,1,3);   // Cogwheel and motor
         var pump =  util.select().position(2, 1, 2); // Pump
         var shaft =  util.select().position(0, 1, 4); // shaft
@@ -103,7 +105,9 @@ public class EnvokillerPonder {
 
 //      ------------ Redstone scene ------------
         scene.addKeyframe();
-
+        scene.idle(30);
+        scene.world().showSection(util.select().fromTo(2,2,0,1,1,0), Direction.SOUTH);
+        scene.idle(30);
         scene.overlay().showOutlineWithText(util.select().position(envo), 80)
                 .text("Envokiller with redstone is lit, fam!")
                 .colored(PonderPalette.RED)
@@ -122,6 +126,11 @@ public class EnvokillerPonder {
 
         scene.addLazyKeyframe();
         // POWERED - Burnrate
+        scene.world().modifyBlock(redstone,
+                state -> state
+                        .setValue(EnvoKiller3000Block.POWERED, true)
+                        .setValue(EnvoKiller3000Block.LIT, true),
+                false);
         scene.world().modifyBlock(envo,
                 state -> state
                         .setValue(EnvoKiller3000Block.POWERED, true)
