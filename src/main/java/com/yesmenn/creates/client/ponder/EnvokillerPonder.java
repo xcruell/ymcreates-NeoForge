@@ -26,7 +26,7 @@ public class EnvokillerPonder {
     // Plugin Call
     public static void register(PonderSceneRegistrationHelper<ResourceLocation> helper) {
         helper.forComponents(YMBlocks.ENVOKILLER3000.getId())
-                .addStoryBoard("envokiller/envokiller", EnvokillerPonder::basics); // CAPPED LETTERS CRASHED THE GAME
+                .addStoryBoard("envokiller/envokiller", EnvokillerPonder::basics);
     }
 
     // Scene start
@@ -100,6 +100,7 @@ public class EnvokillerPonder {
                 .pointAt(util.vector().centerOf(new BlockPos(2,2,3)))
                 .placeNearTarget();
         burn.idle(120);
+
 //      ------------ Redstone scene ------------
         scene.addKeyframe();
 

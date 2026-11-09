@@ -13,16 +13,6 @@ import net.neoforged.neoforge.fluids.FluidStack;
 
 import java.util.List;
 
-/**
- * Rückschlagventil: verhält sich wie ein gerades Create-Rohr, lässt Fluid aber nur
- * von der Einlass-Seite (FACING.getOpposite()) zur Auslass-Seite (FACING) fließen.
- *
- * Create bestimmt die Flussrichtung über den Druck, den Pumpen auf die einzelnen
- * Rohr-Seiten verteilen ("inbound" = Fluid fließt über diese Seite IN das Rohr,
- * "outbound" = Fluid fließt über diese Seite HERAUS). Wir verwerfen einfach jeden
- * Druck, der einen Fluss in Sperrrichtung erzeugen würde – damit kann dort nie ein
- * Flow entstehen, egal ob die Pumpe drückt oder saugt.
- */
 public class CheckValveBlockEntity extends SmartBlockEntity {
 
     public CheckValveBlockEntity(BlockPos pos, BlockState state) {
@@ -41,14 +31,14 @@ public class CheckValveBlockEntity extends SmartBlockEntity {
             super(be);
         }
 
-        /** Nur entlang der Ventilachse gibt es Anschlüsse – wie bei einem geraden Rohr. */
+        // pipe entrance and exit is locked on axis
         @Override
         public boolean canHaveFlowToward(BlockState state, Direction direction) {
             return state.getBlock() instanceof CheckValveBlock
                     && state.getValue(CheckValveBlock.FACING).getAxis() == direction.getAxis();
         }
 
-        /** Druck in Sperrrichtung wird ignoriert. */
+        // Set direction side
         @Override
         public void addPressure(Direction side, boolean inbound, float pressure) {
             if (!isAllowedFlow(blockEntity.getBlockState(), side, inbound))
@@ -56,7 +46,6 @@ public class CheckValveBlockEntity extends SmartBlockEntity {
             super.addPressure(side, inbound, pressure);
         }
 
-        /** Zusätzliche Absicherung: Fluid darf nur über den Einlass hereingezogen werden. */
         @Override
         public boolean canPullFluidFrom(FluidStack fluid, BlockState state, Direction direction) {
             if (!(state.getBlock() instanceof CheckValveBlock))
@@ -70,9 +59,9 @@ public class CheckValveBlockEntity extends SmartBlockEntity {
             if (!(state.getBlock() instanceof CheckValveBlock))
                 return false;
             if (side == CheckValveBlock.getInlet(state))
-                return inbound;   // am Einlass darf Fluid nur hinein
+                return inbound;
             if (side == CheckValveBlock.getOutlet(state))
-                return !inbound;  // am Auslass darf Fluid nur hinaus
+                return !inbound;
             return false;
         }
     }

@@ -1,4 +1,4 @@
-package com.yesmenn.creates.block; // Mein Ordnerpfad
+package com.yesmenn.creates.block;
 
 import com.mojang.serialization.MapCodec;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
@@ -17,6 +17,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -38,17 +39,13 @@ import net.minecraft.world.ticks.TickPriority;
 import java.util.EnumMap;
 import java.util.Map;
 
-/**
- * Rückschlagventil. FACING zeigt in Flussrichtung (= Auslass).
- * Fluid fließt nur von FACING.getOpposite() nach FACING.
- */
+// make block directional
 public class CheckValveBlock extends DirectionalBlock
         implements IBE<CheckValveBlockEntity>, IAxisPipe, IWrenchable, ProperWaterloggedBlock {
 
     public static final MapCodec<CheckValveBlock> CODEC = simpleCodec(CheckValveBlock::new);
 
-    // Form in NORTH-Ausrichtung (passend zum Modell), wird für jede Richtung
-    // genauso rotiert wie das Modell im Blockstate.
+    // rotate fluid axis with block facing
     private static final VoxelShape SHAPE_NORTH = Shapes.or(
             Block.box(4, 4, 0, 12, 12, 16),   // Rohr
             Block.box(3, 3, 0, 13, 13, 1),    // Anschluss vorne
@@ -85,10 +82,6 @@ public class CheckValveBlock extends DirectionalBlock
         return SHAPES.get(state.getValue(FACING));
     }
 
-    /**
-     * Rotiert die NORTH-Form genauso wie der Blockstate das Modell rotiert:
-     * east/south/west = y 90/180/270, up = x 270, down = x 90.
-     */
     private static VoxelShape rotateShape(VoxelShape shape, Direction to) {
         VoxelShape[] result = {Shapes.empty()};
         shape.forAllBoxes((x1, y1, z1, x2, y2, z2) -> {
@@ -106,12 +99,11 @@ public class CheckValveBlock extends DirectionalBlock
         return result[0].optimize();
     }
 
-    /** 90° im Uhrzeigersinn um die Y-Achse (von oben gesehen): North -> East. */
     private static AABB rotY90(AABB b) {
         return new AABB(1 - b.maxZ, b.minY, b.minX, 1 - b.minZ, b.maxY, b.maxX);
     }
 
-    // ---------------------------------------------------------------- State
+    // --------------------- State
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
@@ -136,12 +128,20 @@ public class CheckValveBlock extends DirectionalBlock
         return state.rotate(mirror.getRotation(state.getValue(FACING)));
     }
 
+    // delete liquid - sourceblock in waterlogged valve
+
+    @Override
+    public BlockState updateAfterWrenched(BlockState newState, UseOnContext context) {
+        BlockState updated = IWrenchable.super.updateAfterWrenched(newState, context);  // Create call
+        return updated.setValue(WATERLOGGED, false);
+    }
+
     @Override
     public Direction.Axis getAxis(BlockState state) {
         return state.getValue(FACING).getAxis();
     }
 
-    // ------------------------------------------------- Create-Rohrnetz-Updates
+    // ---------- Create fluid pipe networking
 
     @Override
     protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
@@ -176,7 +176,7 @@ public class CheckValveBlock extends DirectionalBlock
         AdvancementBehaviour.setPlacedBy(level, pos, placer);
     }
 
-    // ---------------------------------------------------------------- Wasser
+    // ---------- fluid simulation
 
     @Override
     protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState,

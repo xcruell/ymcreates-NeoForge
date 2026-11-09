@@ -47,7 +47,7 @@ public class CheckValvePonder {
 
         // YesMenn! Intro
         introSpiral(scene, util, 5, false);
-        scene.world().showSection(util.select().fromTo(4,1,3,0,2,4), Direction.SOUTH); // Build of Tanks
+        scene.world().showSection(util.select().fromTo(4,1,3,0,2,4), Direction.NORTH); // Build of Tanks
         scene.idle(30);
         scene.world().showSection(util.select().fromTo(4,1,2,3,1,0), Direction.EAST); // Left Side
         scene.world().showSection(util.select().fromTo(1,1,0,1,1,2), Direction.WEST); // Right Side
@@ -57,7 +57,7 @@ public class CheckValvePonder {
         fillTank(scene, source, 12000);
         scene.world().showSection(util.select().position(0,1,2), Direction.DOWN);
         scene.idle(20);
-        scene.world().showSection(util.select().position(2,1,1), Direction.UP);
+        scene.world().showSection(util.select().position(2,1,1), Direction.SOUTH); // actor check_valve
         scene.idle(30);
 
         // Highlight the valve
@@ -98,12 +98,13 @@ public class CheckValvePonder {
                 .colored(PonderPalette.GREEN)
                 .pointAt(util.vector().topOf(valve))
                 .placeNearTarget();
-        scene.idle(60);
+        scene.idle(20);
 
         // Is it wrenchable? YesMenn!
         scene.overlay().showControls(util.vector().topOf(valve), Pointing.DOWN, 40)
                 .rightClick()
                 .withItem(AllItems.WRENCH.asStack());
+        scene.idle(50);
 
         var valveLink = scene.world().makeSectionIndependent(util.select().position(valve));
         scene.world().configureCenterOfRotation(valveLink, util.vector().centerOf(valve));
