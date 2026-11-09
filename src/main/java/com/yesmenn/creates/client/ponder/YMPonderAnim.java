@@ -2,6 +2,8 @@ package com.yesmenn.creates.client.ponder;
 
 import com.simibubi.create.Create;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
+import net.createmod.ponder.api.element.ElementLink;
+import net.createmod.ponder.api.element.WorldSectionElement;
 import net.createmod.ponder.api.scene.SceneBuildingUtil;
 import net.createmod.ponder.api.scene.Selection;
 import net.minecraft.core.BlockPos;
@@ -11,6 +13,7 @@ import net.minecraft.world.phys.AABB;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class YMPonderAnim {
@@ -72,11 +75,25 @@ public class YMPonderAnim {
 
     // Outro with whole columns from Y 0 to height-1
     public static void outroSpiralFull(CreateSceneBuilder scene, SceneBuildingUtil util, int size, int height, boolean fromCenter) {
-        List<Selection> order = spiralOut(util, size, height);
-        if (!fromCenter) Collections.reverse(order);
+        outroSpiralFull(scene, util, size, height, fromCenter, Map.of());
+    }
 
-        for (Selection column : order) {
-            scene.world().hideSection(column, Direction.DOWN);
+    // Same, but also hides independent sections (makeSectionIndependent) when the spiral reaches their column.
+    // Key = any block position inside that section (only X/Z matter), value = the section link.
+    public static void outroSpiralFull(CreateSceneBuilder scene, SceneBuildingUtil util, int size, int height, boolean fromCenter,
+                                       Map<BlockPos, ElementLink<WorldSectionElement>> independents) {
+        List<BlockPos> order = spiral(size);
+        if (!fromCenter) Collections.reverse(order);
+        List<Selection> columns = spiralOut(util, size, height);
+        if (!fromCenter) Collections.reverse(columns);
+
+        for (int i = 0; i < order.size(); i++) {
+            BlockPos p = order.get(i);
+            scene.world().hideSection(columns.get(i), Direction.DOWN);
+            independents.forEach((pos, link) -> {
+                if (pos.getX() == p.getX() && pos.getZ() == p.getZ())
+                    scene.world().hideIndependentSection(link, Direction.DOWN);
+            });
             scene.idle(1);
         }
         scene.idle(15);

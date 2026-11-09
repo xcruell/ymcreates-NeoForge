@@ -20,6 +20,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class CheckValvePonder {
 
@@ -117,7 +118,7 @@ public class CheckValvePonder {
         scene.idle(30);
 
         // Call job tank filling
-        TankTransfer job = new TankTransfer(scene, source, target, 12000, 80, 600);
+        TankTransfer job = new TankTransfer(scene, source, target, 12000, 80, 300);
         job.idle(60);
 
         // Last Scene
@@ -136,7 +137,9 @@ public class CheckValvePonder {
         scene.world().setKineticSpeed(drive, 0);
         scene.world().setKineticSpeed(pump, 0);
         scene.idle(20);
-        YMPonderAnim.outroSpiralFull(scene, util, 5, 5, true);
+
+        YMPonderAnim.outroSpiralFull(scene, util, 5, 5, true, Map.of(valve, valveLink));
+        scene.removeShadow();
     }
 
     // -------------------- Basement --------------------
