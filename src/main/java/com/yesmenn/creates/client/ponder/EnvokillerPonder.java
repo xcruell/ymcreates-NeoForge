@@ -64,7 +64,7 @@ public class EnvokillerPonder {
         var tank = util.select().fromTo(2,1,3,2,2,3);   // Tank
 
         // YesMenn! Intro
-        YMPonderAnim.introSpiral(scene, util, 5, true);
+        YMPonderAnim.introSpiralRandom(scene, util, 5);
 
         scene.world().showSection(util.select().position(2,1,1), Direction.SOUTH); // Pipe
         scene.world().showSection(tank, Direction.NORTH);
@@ -191,6 +191,8 @@ public class EnvokillerPonder {
         scene.world().setKineticSpeed(wheel, 0);
         scene.world().setKineticSpeed(pump, 0);
         scene.world().setKineticSpeed(shaft, 0);
+        scene.idle(30);
+        YMPonderAnim.outroSpiralRandom(scene, util, 5);
     }
 
     // -------------------- Basement --------------------

@@ -136,7 +136,7 @@ public class CheckValvePonder {
         scene.world().setKineticSpeed(drive, 0);
         scene.world().setKineticSpeed(pump, 0);
         scene.idle(20);
-
+        YMPonderAnim.outroSpiralFull(scene, util, 5, 5, true);
     }
 
     // -------------------- Basement --------------------
