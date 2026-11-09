@@ -1,8 +1,10 @@
 package com.yesmenn.creates.client.ponder;
 
+import com.simibubi.create.AllItems;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
 import com.yesmenn.creates.registry.YMBlocks;
+import net.createmod.catnip.math.Pointing;
 import net.createmod.ponder.api.PonderPalette;
 import net.createmod.ponder.api.registration.PonderSceneRegistrationHelper;
 import net.createmod.ponder.api.scene.SceneBuilder;
@@ -15,6 +17,10 @@ import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class CheckValvePonder {
 
     // Plugin Call
@@ -23,117 +29,119 @@ public class CheckValvePonder {
                 .addStoryBoard("checkvalve/basics", CheckValvePonder::basics); // CAPPED LETTERS CRASHED THE GAME
     }
 
-    // Szene start
+    // Scene start
     public static void basics(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
 
         scene.title("check_valve", "Using the Check Valve");
-
         scene.configureBasePlate(0, 0, 5); // Base for Ponder
-        scene.world().showSection(util.select().layer(0), Direction.UP); // Baseplate
-        scene.idle(30);
+        // Pos
+        BlockPos valve  = util.grid().at(2, 1, 1);
+        //BlockPos after = util.grid().at(3, 1, 1);   // Infocube Pressure
+        BlockPos before  = util.grid().at(1, 1, 1);   // Infocube Exit
+        //BlockPos pump   = util.grid().at(1, 1, 2);
+        BlockPos source = util.grid().at(1, 1, 3);   // Tank1
+        BlockPos target = util.grid().at(3, 1, 3);   // Tank2
+        var drive = util.select().position(0, 1, 2);   // Cogwheel
+        var pump =  util.select().position(1, 1, 2); // Pump
+
+        // YesMenn! Intro
+        introSpiral(scene, util, 5, false);
         scene.world().showSection(util.select().fromTo(4,1,3,0,2,4), Direction.SOUTH); // Build of Tanks
         scene.idle(30);
-        scene.world().showSection(util.select().fromTo(4,1,2,3,1,2), Direction.EAST);
-        scene.idle(20);
-        scene.world().showSection(util.select().fromTo(1,1,0,1,1,2), Direction.WEST);
-        scene.idle(20);
-        scene.world().showSection(util.select().position(0,1,2), Direction.DOWN);
-        scene.idle(30);
-        scene.world().showSection(util.select().position(2,1,1), Direction.UP);
+        scene.world().showSection(util.select().fromTo(4,1,2,3,1,0), Direction.EAST); // Left Side
+        scene.world().showSection(util.select().fromTo(1,1,0,1,1,2), Direction.WEST); // Right Side
         scene.idle(20);
 
-        // Positionen
-        BlockPos valve  = util.grid().at(2, 1, 1);
-        BlockPos before = util.grid().at(3, 1, 1);   // Infocube Eingang
-        BlockPos after  = util.grid().at(1, 1, 1);   // Infocube Ausgang
-        BlockPos pump   = util.grid().at(1, 1, 2);
-        BlockPos source = util.grid().at(1, 1, 3);   // Tank, aus dem es fließt
-        BlockPos target = util.grid().at(3, 1, 3);   // Tank, in den es fließt
-        var drive = util.select().fromTo(0, 1, 2, 1, 1, 2);   // Zahnrad + Pumpe
-
-        // Start: Quelltank ist gefüllt (VOR der Pumpe)
+        // Fill tank
         fillTank(scene, source, 12000);
-        scene.idle(10);
+        scene.world().showSection(util.select().position(0,1,2), Direction.DOWN);
+        scene.idle(20);
+        scene.world().showSection(util.select().position(2,1,1), Direction.UP);
+        scene.idle(30);
 
-        // Ventil hervorheben
+        // Highlight the valve
         scene.overlay().showOutline(PonderPalette.GREEN, new Object(), util.select().position(valve), 90);
         scene.overlay().showText(90)
-                .text("The Check Valve only lets fluids pass in one direction")
+                .text("Isn't it obvious? Its a 1-Way valve.")
                 .colored(PonderPalette.GREEN)
                 .attachKeyFrame()
                 .pointAt(util.vector().topOf(valve))
                 .placeNearTarget();
         scene.idle(90);
-// UNDO BIS HIER!
-        // Pumpe an, Wasser wird blockiert
+
+        // Pump animation start
         scene.addKeyframe();
         scene.world().setKineticSpeed(drive, 32);
+        scene.world().setKineticSpeed(pump, -32);
         scene.idle(50);
 
-        // Eingang
-        scene.overlay().showOutline(PonderPalette.INPUT, new Object(), util.select().position(before), 70);
-        scene.overlay().showText(70)
-                .text("Fluids enter from the back")
-                .colored(PonderPalette.INPUT)
+        // Infobox Fluid Blocked
+        scene.overlay().showOutline(PonderPalette.RED, new Object(), util.select().position(before), 80);
+        scene.overlay().showText(100)
+                .text("Water gogo here")
+                .colored(PonderPalette.RED)
                 .pointAt(util.vector().topOf(before))
                 .placeNearTarget();
         scene.idle(80);
 
-        // Ausgang
-        scene.overlay().showOutline(PonderPalette.OUTPUT, new Object(), util.select().position(after), 70);
-        scene.overlay().showText(70)
-                .text("and leave through the front")
-                .colored(PonderPalette.OUTPUT)
-                .pointAt(util.vector().topOf(after))
-                .placeNearTarget();
-        scene.idle(80);
-
-        // Pumpe stoppen
+        // Turn off ze pump
         scene.world().setKineticSpeed(drive, 0);
+        scene.world().setKineticSpeed(pump, 0);
         scene.idle(20);
 
-// Ventil um 180° drehen
+        // Rotate the pump baby
         scene.addKeyframe();
-        scene.overlay().showOutline(PonderPalette.GREEN, new Object(), util.select().position(valve), 60);
+        scene.overlay().showOutline(PonderPalette.GREEN, new Object(), util.select().position(valve), 58);
         scene.overlay().showText(60)
                 .text("Turn the valve around to reverse the flow direction")
                 .colored(PonderPalette.GREEN)
                 .pointAt(util.vector().topOf(valve))
                 .placeNearTarget();
-        scene.idle(30);
-        scene.world().modifyBlock(valve,
-                state -> state.setValue(BlockStateProperties.FACING,
-                        state.getValue(BlockStateProperties.FACING).getOpposite()),
-                true);
-        scene.idle(40);
+        scene.idle(60);
 
-        // Pumpe in Gegenrichtung: Wasser fließt zurück
+        // Is it wrenchable? YesMenn!
+        scene.overlay().showControls(util.vector().topOf(valve), Pointing.DOWN, 40)
+                .rightClick()
+                .withItem(AllItems.WRENCH.asStack());
+
+        var valveLink = scene.world().makeSectionIndependent(util.select().position(valve));
+        scene.world().configureCenterOfRotation(valveLink, util.vector().centerOf(valve));
+        scene.world().rotateSection(valveLink, 0, 180, 0, 20);   // 180 slow turn
+        scene.idle(25);
+
+        // Pumps turning on
         scene.world().setKineticSpeed(drive, 32);
+        scene.world().setKineticSpeed(pump, -32);
         scene.idle(30);
 
-        // Umfüllen läuft im Hintergrund (600 Ticks), die Szene geht schon nach 60 Ticks weiter
-        TankTransfer job = new TankTransfer(scene, source, target, 12000, 80, 600, 3);
+        // Call job tank filling
+        TankTransfer job = new TankTransfer(scene, source, target, 12000, 80, 600);
         job.idle(60);
 
-        // Platzhalter-Text, während der Tank weiter befüllt wird
+        // Last Scene
         scene.addKeyframe();
         scene.overlay().showText(80)
                 .text("Placeholder: now the fluid flows through the valve")
                 .colored(PonderPalette.OUTPUT)
-                .pointAt(util.vector().topOf(valve))
+                .pointAt(util.vector().topOf(target))
                 .placeNearTarget();
         job.idle(90);
         scene.markAsFinished();
-        // Warten, bis der Tank fertig befüllt ist, dann Pumpe stoppen
+
+        // wait for liquidtransfer to finish
         job.finish();
-        scene.idle(20);
+        scene.idle(5);
         scene.world().setKineticSpeed(drive, 0);
+        scene.world().setKineticSpeed(pump, 0);
         scene.idle(20);
 
-        // scene.markAsFinished();
     }
 
+    // -------------------- Basement --------------------
+
+
+    // ----- Tanks -----
     private static void fillTank(CreateSceneBuilder scene, BlockPos pos, int amount) {
         scene.world().modifyBlockEntity(pos, FluidTankBlockEntity.class,
                 be -> be.getTankInventory().fill(new FluidStack(Fluids.WATER, amount),
@@ -145,26 +153,50 @@ public class CheckValvePonder {
                 be -> be.getTankInventory().drain(amount, IFluidHandler.FluidAction.EXECUTE));
     }
 
-    // Füllt von "from" nach "to" um. Am Anfang schnell, am Ende langsam (Ease-out).
-    // Läuft parallel zur Szene: job.idle(...) ersetzt scene.idle(...)
+    // ----- Basecall YesMenn Intro -----
+    private static List<BlockPos> spiral(int size) {
+        List<BlockPos> out = new ArrayList<>();
+        int minX = 0, maxX = size - 1, minZ = 0, maxZ = size - 1;
+        while (minX <= maxX && minZ <= maxZ) {
+            for (int x = minX; x <= maxX; x++) out.add(new BlockPos(x, 0, minZ));
+            for (int z = minZ + 1; z <= maxZ; z++) out.add(new BlockPos(maxX, 0, z));
+            if (minZ < maxZ)
+                for (int x = maxX - 1; x >= minX; x--) out.add(new BlockPos(x, 0, maxZ));
+            if (minX < maxX)
+                for (int z = maxZ - 1; z > minZ; z--) out.add(new BlockPos(minX, 0, z));
+            minX++; maxX--; minZ++; maxZ--;
+        }
+        return out;
+    }
+
+    private static void introSpiral(CreateSceneBuilder scene, SceneBuildingUtil util, int size, boolean fromCenter) {
+        List<BlockPos> order = spiral(size);
+        if (fromCenter) Collections.reverse(order);
+
+        for (BlockPos p : order) {
+            scene.world().showSection(util.select().position(p), Direction.UP);
+            scene.idle(1);
+        }
+        scene.idle(15);
+    }
+
+// ----- Liquid Transferjob and Jobcalling -----
     private static class TankTransfer {
         private final CreateSceneBuilder scene;
         private final BlockPos from, to;
         private final int total, steps, duration;
-        private final double power;
-        private int stepIndex = 0;   // wie viele Schritte schon gelaufen sind
-        private int elapsed = 0;     // Ticks seit dem Start
-        private int moved = 0;       // bisher umgefüllte Menge
+        private int stepIndex = 0;   // steps already made
+        private int elapsed = 0;     // ticks since start
+        private int moved = 0;       // already moved buckets
 
         TankTransfer(CreateSceneBuilder scene, BlockPos from, BlockPos to,
-                     int total, int steps, int duration, double power) {
+                     int total, int steps, int duration) {
             this.scene = scene;
             this.from = from;
             this.to = to;
             this.total = total;
             this.steps = steps;
             this.duration = duration;
-            this.power = power;
         }
 
         private boolean isDone() {
@@ -173,8 +205,7 @@ public class CheckValvePonder {
 
         private void doStep() {
             stepIndex++;
-            double t = (double) stepIndex / steps;
-            int reached = (int) Math.round(total * (1 - Math.pow(1 - t, power)));
+            int reached = (int) Math.round((double) total * stepIndex / steps);   // linear
             int amount = reached - moved;
             moved = reached;
             if (amount > 0) {
@@ -183,7 +214,7 @@ public class CheckValvePonder {
             }
         }
 
-        // Ersatz für scene.idle(...): wartet und füllt dabei im Hintergrund weiter um
+        // Jobticks in the background for filling the tanks
         void idle(int ticks) {
             while (ticks > 0) {
                 if (isDone()) {
@@ -203,7 +234,7 @@ public class CheckValvePonder {
             }
         }
 
-        // Wartet, bis die komplette Umfüllung durch ist
+        // idle until the job is done
         void finish() {
             idle(Math.max(0, duration - elapsed));
             while (!isDone()) {
