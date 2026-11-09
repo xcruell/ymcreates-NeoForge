@@ -1,4 +1,4 @@
-package com.yesmenn.creates.block; // Mein Ordnerpfad
+package com.yesmenn.creates.block;
 
 import com.mojang.serialization.MapCodec;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
@@ -38,17 +38,11 @@ import net.minecraft.world.ticks.TickPriority;
 import java.util.EnumMap;
 import java.util.Map;
 
-/**
- * Rückschlagventil. FACING zeigt in Flussrichtung (= Auslass).
- * Fluid fließt nur von FACING.getOpposite() nach FACING.
- */
 public class CheckValveBlock extends DirectionalBlock
         implements IBE<CheckValveBlockEntity>, IAxisPipe, IWrenchable, ProperWaterloggedBlock {
 
     public static final MapCodec<CheckValveBlock> CODEC = simpleCodec(CheckValveBlock::new);
 
-    // Form in NORTH-Ausrichtung (passend zum Modell), wird für jede Richtung
-    // genauso rotiert wie das Modell im Blockstate.
     private static final VoxelShape SHAPE_NORTH = Shapes.or(
             Block.box(4, 4, 0, 12, 12, 16),   // Rohr
             Block.box(3, 3, 0, 13, 13, 1),    // Anschluss vorne
@@ -78,17 +72,11 @@ public class CheckValveBlock extends DirectionalBlock
         return state.getValue(FACING).getOpposite();
     }
 
-    // ---------------------------------------------------------------- Shape
-
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPES.get(state.getValue(FACING));
     }
 
-    /**
-     * Rotiert die NORTH-Form genauso wie der Blockstate das Modell rotiert:
-     * east/south/west = y 90/180/270, up = x 270, down = x 90.
-     */
     private static VoxelShape rotateShape(VoxelShape shape, Direction to) {
         VoxelShape[] result = {Shapes.empty()};
         shape.forAllBoxes((x1, y1, z1, x2, y2, z2) -> {
@@ -106,12 +94,9 @@ public class CheckValveBlock extends DirectionalBlock
         return result[0].optimize();
     }
 
-    /** 90° im Uhrzeigersinn um die Y-Achse (von oben gesehen): North -> East. */
     private static AABB rotY90(AABB b) {
         return new AABB(1 - b.maxZ, b.minY, b.minX, 1 - b.minZ, b.maxY, b.maxX);
     }
-
-    // ---------------------------------------------------------------- State
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
@@ -120,7 +105,6 @@ public class CheckValveBlock extends DirectionalBlock
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        // Fluss zeigt vom Spieler weg (in Blickrichtung), mit Sneaken umgekehrt.
         Direction looking = context.getNearestLookingDirection();
         Direction facing = context.isSecondaryUseActive() ? looking.getOpposite() : looking;
         return withWater(defaultBlockState().setValue(FACING, facing), context);
@@ -140,8 +124,6 @@ public class CheckValveBlock extends DirectionalBlock
     public Direction.Axis getAxis(BlockState state) {
         return state.getValue(FACING).getAxis();
     }
-
-    // ------------------------------------------------- Create-Rohrnetz-Updates
 
     @Override
     protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
@@ -176,8 +158,6 @@ public class CheckValveBlock extends DirectionalBlock
         AdvancementBehaviour.setPlacedBy(level, pos, placer);
     }
 
-    // ---------------------------------------------------------------- Wasser
-
     @Override
     protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState,
                                      LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
@@ -194,8 +174,6 @@ public class CheckValveBlock extends DirectionalBlock
     protected boolean isPathfindable(BlockState state, PathComputationType type) {
         return false;
     }
-
-    // ---------------------------------------------------------------- BE
 
     @Override
     public Class<CheckValveBlockEntity> getBlockEntityClass() {

@@ -16,6 +16,6 @@ public class YesmennPonders implements PonderPlugin {
     public void registerScenes(PonderSceneRegistrationHelper<ResourceLocation> helper) {
         CheckValvePonder.register(helper);
         EnvokillerPonder.register(helper);
-        // NeuerBlockScenes.register(helper);   <- weitere Blöcke einfach hier ergänzen
+        
     }
 }

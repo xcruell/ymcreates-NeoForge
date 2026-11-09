@@ -13,16 +13,6 @@ import net.neoforged.neoforge.fluids.FluidStack;
 
 import java.util.List;
 
-/**
- * Rückschlagventil: verhält sich wie ein gerades Create-Rohr, lässt Fluid aber nur
- * von der Einlass-Seite (FACING.getOpposite()) zur Auslass-Seite (FACING) fließen.
- *
- * Create bestimmt die Flussrichtung über den Druck, den Pumpen auf die einzelnen
- * Rohr-Seiten verteilen ("inbound" = Fluid fließt über diese Seite IN das Rohr,
- * "outbound" = Fluid fließt über diese Seite HERAUS). Wir verwerfen einfach jeden
- * Druck, der einen Fluss in Sperrrichtung erzeugen würde – damit kann dort nie ein
- * Flow entstehen, egal ob die Pumpe drückt oder saugt.
- */
 public class CheckValveBlockEntity extends SmartBlockEntity {
 
     public CheckValveBlockEntity(BlockPos pos, BlockState state) {
