@@ -10,13 +10,18 @@ import net.createmod.ponder.api.PonderPalette;
 import net.createmod.ponder.api.registration.PonderSceneRegistrationHelper;
 import net.createmod.ponder.api.scene.SceneBuilder;
 import net.createmod.ponder.api.scene.SceneBuildingUtil;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.LeverBlock;
+import net.minecraft.world.level.block.RedStoneWireBlock;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,13 +56,15 @@ public class EnvokillerPonder {
         BlockPos fpump = util.grid().at(2, 1, 2); // Pump for fade in
         BlockPos source = util.grid().at(2, 1, 3);   // Tank1
         BlockPos redstone = util.grid().at(2, 2, 0);
+        BlockPos lever = util.grid().at(1, 1, 0);
+
         var wheel = util.select().fromTo(1,1,2,1,1,3);   // Cogwheel and motor
         var pump =  util.select().position(2, 1, 2); // Pump
         var shaft =  util.select().position(0, 1, 4); // shaft
         var tank = util.select().fromTo(2,1,3,2,2,3);   // Tank
 
         // YesMenn! Intro
-        introSpiral(scene, util, 5, true);
+        YMPonderAnim.introSpiral(scene, util, 5, true);
 
         scene.world().showSection(util.select().position(2,1,1), Direction.SOUTH); // Pipe
         scene.world().showSection(tank, Direction.NORTH);
@@ -95,13 +102,18 @@ public class EnvokillerPonder {
         scene.world().modifyBlock(envo,
                 state -> state.setValue(EnvoKiller3000Block.LIT, true),
                 false);
+
+        scene.world().modifyBlock(envo,
+                state -> state.setValue(LeverBlock.POWERED, true),
+                false);
+
         FuelBurn burn = new FuelBurn(scene, source, FUEL, BURN_RATE);
         scene.overlay().showText(240)
                 .text("Burnrate without redstone")
                 .colored(PonderPalette.WHITE)
                 .pointAt(util.vector().centerOf(new BlockPos(2,2,3)))
                 .placeNearTarget();
-        burn.idle(120);
+        burn.idle(100);
 
 //      ------------ Redstone scene ------------
         scene.addKeyframe();
@@ -122,21 +134,34 @@ public class EnvokillerPonder {
                 0.1F,      // Particles per Tick
                 80);    // how many ticks
 
+
         burn.idle(LIT_WAIT - 60);
 
         scene.addLazyKeyframe();
         // POWERED - Burnrate
         scene.world().modifyBlock(redstone,
                 state -> state
-                        .setValue(EnvoKiller3000Block.POWERED, true)
-                        .setValue(EnvoKiller3000Block.LIT, true),
+                        .setValue(RedStoneWireBlock.POWER, 15),
                 false);
+        scene.effects().indicateRedstone(redstone);
+        scene.world().modifyBlock(lever,
+                state -> state
+                        .setValue(LeverBlock.POWERED, true),
+                false);
+        scene.effects().indicateRedstone(lever);
+
         scene.world().modifyBlock(envo,
                 state -> state
                         .setValue(EnvoKiller3000Block.POWERED, true)
                         .setValue(EnvoKiller3000Block.LIT, true),
                 false);
+        scene.idle(30);
+        scene.effects().indicateRedstone(redstone);
         burn.setRate(POWERED_RATE);
+        scene.effects().indicateRedstone(redstone);
+        scene.idle(30);
+        scene.effects().indicateRedstone(redstone);
+
         scene.overlay().showText(80)
                 .text("Brunrate with Redstone")
                 .colored(PonderPalette.WHITE)
@@ -169,33 +194,6 @@ public class EnvokillerPonder {
     }
 
     // -------------------- Basement --------------------
-
-    // ----- Basecall YesMenn Intro -----
-    private static List<BlockPos> spiral(int size) {
-        List<BlockPos> out = new ArrayList<>();
-        int minX = 0, maxX = size - 1, minZ = 0, maxZ = size - 1;
-        while (minX <= maxX && minZ <= maxZ) {
-            for (int x = minX; x <= maxX; x++) out.add(new BlockPos(x, 0, minZ));
-            for (int z = minZ + 1; z <= maxZ; z++) out.add(new BlockPos(maxX, 0, z));
-            if (minZ < maxZ)
-                for (int x = maxX - 1; x >= minX; x--) out.add(new BlockPos(x, 0, maxZ));
-            if (minX < maxX)
-                for (int z = maxZ - 1; z > minZ; z--) out.add(new BlockPos(minX, 0, z));
-            minX++; maxX--; minZ++; maxZ--;
-        }
-        return out;
-    }
-
-    private static void introSpiral(CreateSceneBuilder scene, SceneBuildingUtil util, int size, boolean fromCenter) {
-        List<BlockPos> order = spiral(size);
-        if (fromCenter) Collections.reverse(order);
-
-        for (BlockPos p : order) {
-            scene.world().showSection(util.select().position(p), Direction.UP);
-            scene.idle(1);
-        }
-        scene.idle(15);
-    }
 
     // ----- Basecall Tank filling -----
     private static void fillTank(CreateSceneBuilder scene, BlockPos pos, int amount) {

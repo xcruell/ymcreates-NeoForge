@@ -75,7 +75,7 @@ public class CheckValveBlock extends DirectionalBlock
         return state.getValue(FACING).getOpposite();
     }
 
-    // ---------------------------------------------------------------- Shape
+    // Shape
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {

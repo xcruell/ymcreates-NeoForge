@@ -46,7 +46,7 @@ public class CheckValvePonder {
         var pump =  util.select().position(1, 1, 2); // Pump
 
         // YesMenn! Intro
-        introSpiral(scene, util, 5, false);
+        YMPonderAnim.introSpiral(scene, util, 5, false);
         scene.world().showSection(util.select().fromTo(4,1,3,0,2,4), Direction.NORTH); // Build of Tanks
         scene.idle(30);
         scene.world().showSection(util.select().fromTo(4,1,2,3,1,0), Direction.EAST); // Left Side
@@ -152,33 +152,6 @@ public class CheckValvePonder {
     private static void drainTank(CreateSceneBuilder scene, BlockPos pos, int amount) {
         scene.world().modifyBlockEntity(pos, FluidTankBlockEntity.class,
                 be -> be.getTankInventory().drain(amount, IFluidHandler.FluidAction.EXECUTE));
-    }
-
-    // ----- Basecall YesMenn Intro -----
-    private static List<BlockPos> spiral(int size) {
-        List<BlockPos> out = new ArrayList<>();
-        int minX = 0, maxX = size - 1, minZ = 0, maxZ = size - 1;
-        while (minX <= maxX && minZ <= maxZ) {
-            for (int x = minX; x <= maxX; x++) out.add(new BlockPos(x, 0, minZ));
-            for (int z = minZ + 1; z <= maxZ; z++) out.add(new BlockPos(maxX, 0, z));
-            if (minZ < maxZ)
-                for (int x = maxX - 1; x >= minX; x--) out.add(new BlockPos(x, 0, maxZ));
-            if (minX < maxX)
-                for (int z = maxZ - 1; z > minZ; z--) out.add(new BlockPos(minX, 0, z));
-            minX++; maxX--; minZ++; maxZ--;
-        }
-        return out;
-    }
-
-    private static void introSpiral(CreateSceneBuilder scene, SceneBuildingUtil util, int size, boolean fromCenter) {
-        List<BlockPos> order = spiral(size);
-        if (fromCenter) Collections.reverse(order);
-
-        for (BlockPos p : order) {
-            scene.world().showSection(util.select().position(p), Direction.UP);
-            scene.idle(1);
-        }
-        scene.idle(15);
     }
 
     // ----- Liquid Transferjob and Jobcalling -----
