@@ -63,17 +63,18 @@ public class EnvokillerPonder {
         var shaft =  util.select().position(0, 1, 4); // shaft
         var tank = util.select().fromTo(2,1,3,2,2,3);   // Tank
 
+
+        // Scene Start
         scene.world().showSection(util.select().position(envo), Direction.DOWN);
         scene.idle(20);
         scene.addKeyframe();
-        scene.overlay().showText(80)
+        scene.overlay().showText(120)
                 .text("Envokiller is nice yes.")
                 .colored(PonderPalette.WHITE)
-                .pointAt(util.vector().centerOf(envo))
-                .placeNearTarget();
+                .attachKeyFrame();
         scene.idle(50);
 
-        // YesMenn! Intro
+        // YesMenn! BaseplateIntro
         YMPonderAnim.introSpiralRandom(scene, util, 5);
 
         scene.world().showSection(util.select().position(2,1,1), Direction.WEST); // Pipe
@@ -94,14 +95,15 @@ public class EnvokillerPonder {
 
         scene.overlay().showText(80)
                 .text("Envokiller needs some hot stuff!")
-                .colored(PonderPalette.GREEN)
+                .colored(PonderPalette.WHITE)
                 .pointAt(util.vector().topOf(envo))
                 .placeNearTarget();
         scene.idle(30);
 
         // lit (fam) and start the burning job
         scene.world().modifyBlock(envo,
-                state -> state.setValue(EnvoKiller3000Block.LIT, true),
+                state -> state.setValue(EnvoKiller3000Block.LIT, true)
+                        .setValue(EnvoKiller3000Block.POWERED, false),
                 false);
 
         scene.world().modifyBlock(envo,
@@ -112,8 +114,7 @@ public class EnvokillerPonder {
         scene.overlay().showText(240)
                 .text("Burnrate without redstone")
                 .colored(PonderPalette.WHITE)
-                .pointAt(util.vector().centerOf(new BlockPos(2,2,3)))
-                .placeNearTarget();
+                .attachKeyFrame(); // Overlaybox
         burn.idle(50);
 
 //      ------------ Redstone scene ------------
@@ -125,16 +126,6 @@ public class EnvokillerPonder {
                 .text("Envokiller with redstone is lit, fam!")
                 .colored(PonderPalette.RED)
                 .placeNearTarget();
-
-        var ember = scene.effects().simpleParticleEmitter(
-                YMParticles.EMBER.get(),      // register of ze envokiller awesome particles
-                new Vec3(0.07, 0.05, 0));             // particle movement
-        scene.effects().emitParticles(
-                util.vector().topOf(envo).add(0, 1.0, 0),   // particle spawnpoint
-                ember,
-                0.1F,      // Particles per Tick
-                80);    // how many ticks
-
 
         burn.idle(LIT_WAIT - 60);
 
@@ -156,6 +147,7 @@ public class EnvokillerPonder {
                         .setValue(EnvoKiller3000Block.POWERED, true)
                         .setValue(EnvoKiller3000Block.LIT, true),
                 false);
+
         scene.idle(30);
         scene.effects().indicateRedstone(redstone);
         burn.setRate(POWERED_RATE);
@@ -170,13 +162,13 @@ public class EnvokillerPonder {
                 .placeNearTarget();
 
         //get envokillers particles
-        scene.effects().emitParticles(
-                util.vector().topOf(envo).add(0, 0.07, 0),   // particle spawnpoint
-                ember,
-                1,      // Particles per Tick
-                POWERED_WAIT);    // how many ticks
-        burn.idle(POWERED_WAIT);
-        scene.idle(30);
+//        scene.effects().emitParticles(
+//                util.vector().topOf(envo).add(0, 0.7, 0),   // particle spawnpoint
+//                ember,
+//                1,      // Particles per Tick
+//                POWERED_WAIT);    // how many ticks
+//        burn.idle(POWERED_WAIT);
+//        scene.idle(30);
 
         scene.markAsFinished();
 
