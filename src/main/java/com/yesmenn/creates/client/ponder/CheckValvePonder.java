@@ -46,36 +46,44 @@ public class CheckValvePonder {
         var drive = util.select().position(0, 1, 2);   // Cogwheel
         var pump =  util.select().position(1, 1, 2); // Pump
 
+        scene.world().showSection(util.select().position(2,1,1), Direction.SOUTH); // actor check_valve
+        scene.addKeyframe();
+        scene.idle(10);
+        scene.overlay().showText(120)
+                .text("Checkvalve introdution")
+                .colored(PonderPalette.WHITE)
+                .attachKeyFrame();
+        scene.idle(50);
+
         // YesMenn! Intro
         YMPonderAnim.introSpiral(scene, util, 5, false);
         scene.world().showSection(util.select().fromTo(4,1,3,0,2,4), Direction.NORTH); // Build of Tanks
-        scene.idle(30);
-        scene.world().showSection(util.select().fromTo(4,1,2,3,1,0), Direction.EAST); // Left Side
-        scene.world().showSection(util.select().fromTo(1,1,0,1,1,2), Direction.WEST); // Right Side
+        scene.idle(15);
+        scene.world().showSection(util.select().fromTo(4,1,2,3,1,0), Direction.WEST); // Left Side
+        scene.world().showSection(util.select().fromTo(1,1,0,1,1,2), Direction.EAST); // Right Side
         scene.idle(20);
 
         // Fill tank
         fillTank(scene, source, 12000);
         scene.world().showSection(util.select().position(0,1,2), Direction.DOWN);
         scene.idle(20);
-        scene.world().showSection(util.select().position(2,1,1), Direction.SOUTH); // actor check_valve
-        scene.idle(30);
+
+        scene.addKeyframe();
 
         // Highlight the valve
-        scene.overlay().showOutline(PonderPalette.GREEN, new Object(), util.select().position(valve), 90);
-        scene.overlay().showText(90)
-                .text("Isn't it obvious? Its a 1-Way valve.")
-                .colored(PonderPalette.GREEN)
-                .attachKeyFrame()
-                .pointAt(util.vector().topOf(valve))
-                .placeNearTarget();
-        scene.idle(90);
+//        scene.overlay().showOutline(PonderPalette.GREEN, new Object(), util.select().position(valve), 90);
+//        scene.overlay().showText(90)
+//                .text("Isn't it obvious? Its a 1-Way valve.")
+//                .colored(PonderPalette.GREEN)
+//                .attachKeyFrame()
+//                .pointAt(util.vector().topOf(valve))
+//                .placeNearTarget();
+//        scene.idle(90);
 
         // Pump animation start
-        scene.addKeyframe();
         scene.world().setKineticSpeed(drive, 32);
         scene.world().setKineticSpeed(pump, -32);
-        scene.idle(50);
+        scene.idle(30);
 
         // Infobox Fluid Blocked
         scene.overlay().showOutline(PonderPalette.RED, new Object(), util.select().position(before), 80);
@@ -99,7 +107,7 @@ public class CheckValvePonder {
                 .colored(PonderPalette.GREEN)
                 .pointAt(util.vector().topOf(valve))
                 .placeNearTarget();
-        scene.idle(20);
+        scene.idle(10);
 
         // Is it wrenchable? YesMenn!
         scene.overlay().showControls(util.vector().topOf(valve), Pointing.DOWN, 40)
